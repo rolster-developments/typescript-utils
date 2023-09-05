@@ -89,7 +89,10 @@ export function equalsDate(date: Date, compareDate = new Date()): boolean {
   return date.getTime() === compareDate.getTime();
 }
 
-export function equalsDateWeight(date: Date, compareDate = new Date()): boolean {
+export function equalsDateWeight(
+  date: Date,
+  compareDate = new Date()
+): boolean {
   return getDateWeight(date) === getDateWeight(compareDate);
 }
 
@@ -97,7 +100,10 @@ export function isBeforeDate(date: Date, compareDate = new Date()): boolean {
   return date.getTime() > compareDate.getTime();
 }
 
-export function isBeforeOrEqualsDate(date: Date, compareDate = new Date()): boolean {
+export function isBeforeOrEqualsDate(
+  date: Date,
+  compareDate = new Date()
+): boolean {
   return date.getTime() >= compareDate.getTime();
 }
 
@@ -105,7 +111,10 @@ export function isAfterDate(date: Date, compareDate = new Date()): boolean {
   return date.getTime() < compareDate.getTime();
 }
 
-export function isAfterOrEqualsDate(date: Date, compareDate = new Date()): boolean {
+export function isAfterOrEqualsDate(
+  date: Date,
+  compareDate = new Date()
+): boolean {
   return date.getTime() <= compareDate.getTime();
 }
 
@@ -114,7 +123,9 @@ export function isBetweenDate(
   maxDate: Date,
   compareDate = new Date()
 ): boolean {
-  return isAfterDate(minDate, compareDate) && isBeforeDate(maxDate, compareDate);
+  return (
+    isAfterDate(minDate, compareDate) && isBeforeDate(maxDate, compareDate)
+  );
 }
 
 export function isBetweenOrEqualsDate(
@@ -132,7 +143,10 @@ export function getDifference(date: Date, compareDate = new Date()): number {
   return date.getTime() - compareDate.getTime();
 }
 
-export function getDifferenceForHumans(date: Date, compare = new Date()): string {
+export function getDifferenceForHumans(
+  date: Date,
+  compare = new Date()
+): string {
   return getFormatForHumans(getDifference(date, compare));
 }
 

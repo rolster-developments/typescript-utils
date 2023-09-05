@@ -1,5 +1,8 @@
 export class ScrollerElement {
-  constructor(private element: HTMLElement, private scrollError = 0) {}
+  constructor(
+    private element: HTMLElement,
+    private scrollError = 0
+  ) {}
 
   public get scrollWidth(): number {
     return this.element.scrollWidth;

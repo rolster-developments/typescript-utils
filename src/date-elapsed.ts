@@ -80,7 +80,10 @@ export function getFormatForHumans(milliseconds: number): string {
   return description;
 }
 
-export function getPendingTime(initial: Date, future = new Date()): PendingTime {
+export function getPendingTime(
+  initial: Date,
+  future = new Date()
+): PendingTime {
   const difference = future.getTime() - initial.getTime();
 
   return {

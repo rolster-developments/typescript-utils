@@ -8,7 +8,10 @@ interface EachArray<T> {
 }
 
 class ForEachBreakException<T> extends Error {
-  constructor(public readonly element: T, public readonly index: number) {
+  constructor(
+    public readonly element: T,
+    public readonly index: number
+  ) {
     super('ForEach Exception');
   }
 }
@@ -61,7 +64,9 @@ export function arrayEach<T>(props: EachArray<T>): boolean {
   }
 }
 
-export function reduceDistinct<T, V>(array: T[], reducer: (value: T) => V): V[] {
+type Reducer<T, V> = (value: T) => V;
+
+export function reduceDistinct<T, V>(array: T[], reducer: Reducer<T, V>): V[] {
   return array.reduce((result: V[], element) => {
     const value = reducer(element);
 

@@ -28,7 +28,9 @@ function clone<A>(object: A, caches: unknown[]): A {
   }
 
   if (prototypeToString.call(object) === '[object Object]') {
-    const [cacheObject] = caches.filter((cacheObject) => cacheObject === object);
+    const [cacheObject] = caches.filter(
+      (cacheObject) => cacheObject === object
+    );
 
     if (cacheObject) {
       return cacheObject as A;
@@ -163,6 +165,9 @@ export function arrayToMapReduce<E, V>(props: ArrayToMapProps<E, V>): V[] {
   return Array.from(map.entries()).map(([_, value]) => value);
 }
 
-export function callback<T = any>(call: Calleable<T>, ...args: any): Undefined<T> {
+export function callback<T = any>(
+  call: Calleable<T>,
+  ...args: any
+): Undefined<T> {
   return typeof call !== 'function' ? undefined : call.apply(call, args);
 }

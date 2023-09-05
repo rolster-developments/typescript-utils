@@ -177,7 +177,11 @@ export class Double {
     checkInt32(roundMode, 0, 8);
 
     const double = round(this, decimals + getBase10Exp(this) + 1, roundMode);
-    const str = toString(double.abs(), false, decimals + getBase10Exp(double) + 1);
+    const str = toString(
+      double.abs(),
+      false,
+      decimals + getBase10Exp(double) + 1
+    );
 
     return this.isNegative() && !this.isZero() ? `-${str}` : str;
   }
@@ -281,7 +285,11 @@ function parseDouble(signed: number, doubleStr: string): DoubleProps {
     ++i;
   }
 
-  for (length = doubleStr.length; doubleStr.charCodeAt(length - 1) === CHAR_ZERO; ) {
+  for (
+    length = doubleStr.length;
+    doubleStr.charCodeAt(length - 1) === CHAR_ZERO;
+
+  ) {
     --length;
   }
 
@@ -387,7 +395,8 @@ function plus(number1: Double, number2: Double): Double {
 
   for (; expDiff; ) {
     carry =
-      ((decimals1[--expDiff] = decimals1[expDiff] + decimals2[expDiff] + carry) /
+      ((decimals1[--expDiff] =
+        decimals1[expDiff] + decimals2[expDiff] + carry) /
         BASE) |
       0;
     decimals1[expDiff] %= BASE;
@@ -658,7 +667,12 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
 
     do {
       index2 = 0;
-      let result = compare(number2.decimals, redimDecimals, length2, redimLength);
+      let result = compare(
+        number2.decimals,
+        redimDecimals,
+        length2,
+        redimLength
+      );
 
       if (result < 0) {
         let redimFirst = redimDecimals[0];
@@ -680,7 +694,12 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
           lengthMultiply = multuply2.length;
           redimLength = redimDecimals.length;
 
-          result = compare(multuply2, redimDecimals, lengthMultiply, redimLength);
+          result = compare(
+            multuply2,
+            redimDecimals,
+            lengthMultiply,
+            redimLength
+          );
 
           if (result == 1) {
             index2--;
@@ -732,7 +751,10 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
         redimDecimals = [decimals1[lengthTemp]];
         redimLength = 1;
       }
-    } while ((lengthTemp++ < length1 || redimDecimals[0] !== void 0) && precTemp--);
+    } while (
+      (lengthTemp++ < length1 || redimDecimals[0] !== void 0) &&
+      precTemp--
+    );
   }
 
   if (!decimals[0]) {
@@ -741,7 +763,9 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
 
   const double = Double.create({ decimals, exp, signed });
 
-  const precisionDef = places ? precision + getExpBase10(double) + 1 : precision;
+  const precisionDef = places
+    ? precision + getExpBase10(double) + 1
+    : precision;
 
   return round(double, precisionDef);
 }
@@ -784,7 +808,11 @@ function compareTo(number1: Double, number2: Double): number {
     }
   }
 
-  return length1 === length2 ? 0 : length1 > length2 !== number1.signed < 0 ? 1 : -1;
+  return length1 === length2
+    ? 0
+    : length1 > length2 !== number1.signed < 0
+    ? 1
+    : -1;
 }
 
 function compare(
@@ -810,7 +838,11 @@ function compare(
   return result;
 }
 
-function subtract(numbers1: number[], numbers2: number[], length: number): void {
+function subtract(
+  numbers1: number[],
+  numbers2: number[],
+  length: number
+): void {
   for (let i = 0; length--; ) {
     numbers1[length] -= i;
     i = numbers1[length] < numbers2[length] ? 1 : 0;
@@ -867,7 +899,8 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
 
     doRound =
       rm < 4
-        ? (roundDigit || doRound) && (rm == 0 || rm == (double.signed < 0 ? 3 : 2))
+        ? (roundDigit || doRound) &&
+          (rm == 0 || rm == (double.signed < 0 ? 3 : 2))
         : roundDigit > 5 ||
           (roundDigit == 5 &&
             (rm == 4 ||
@@ -889,7 +922,10 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
 
       precisionDef = precisionDef - exp10 - 1;
 
-      const value = Math.pow(10, (LOG_BASE - (precisionDef % LOG_BASE)) % LOG_BASE);
+      const value = Math.pow(
+        10,
+        (LOG_BASE - (precisionDef % LOG_BASE)) % LOG_BASE
+      );
       const exp = Math.floor(-precisionDef / LOG_BASE) || 0;
 
       return Double.create({ decimals: [value], exp, signed: double.signed });
@@ -945,7 +981,9 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
   }
 
   if (double.exp > MAX_EXPONENT || double.exp < -MAX_EXPONENT) {
-    throw Error('[DecimalError] Exponent out of range: ' + getExpBase10(double));
+    throw Error(
+      '[DecimalError] Exponent out of range: ' + getExpBase10(double)
+    );
   }
 
   return Double.create({ decimals, exp, signed });
@@ -959,7 +997,8 @@ function toString(double: Double, isExponent: boolean, sd?: number): string {
 
   if (isExponent) {
     if (sd && (countZero = sd - length) > 0) {
-      digits = digits.charAt(0) + '.' + digits.slice(1) + padZeroString(countZero);
+      digits =
+        digits.charAt(0) + '.' + digits.slice(1) + padZeroString(countZero);
     } else if (length > 1) {
       digits = digits.charAt(0) + '.' + digits.slice(1);
     }

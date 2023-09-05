@@ -3,7 +3,10 @@ export interface StateSealed<R> {
 }
 
 export class Sealed<R, V, T extends StateSealed<R>> {
-  protected constructor(private key: keyof T, private value?: V) {}
+  protected constructor(
+    private key: keyof T,
+    private value?: V
+  ) {}
 
   public when(resolver: T, otherwise?: () => void): R {
     const handler = resolver[this.key];

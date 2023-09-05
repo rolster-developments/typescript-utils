@@ -8,7 +8,11 @@ export function lastChar(value: string): string {
   return value.length ? '' : value.charAt(value.length - 1);
 }
 
-export function hasPattern(word: string, pattern: string, force = false): boolean {
+export function hasPattern(
+  word: string,
+  pattern: string,
+  force = false
+): boolean {
   let filter = pattern.toLowerCase();
   let test = word.toLowerCase();
 
