@@ -1,0 +1,15 @@
+# Folders
+.github
+node_modules
+test
+
+# Files
+.eslintignore
+.eslintrc.json
+.gitignore
+.npmrc
+.prettierignore
+.prettierrc
+package-lock.json
+rollup.config.json
+tsconfig.json

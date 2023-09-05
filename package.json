@@ -1,0 +1,35 @@
+{
+  "name": "@rolster/typescript-utils",
+  "version": "4.0.0",
+  "description": "Utilities package compatible with Typescript projects.",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "main": "dist/lib.cjs.js",
+  "unpkg": "dist/lib.js",
+  "author": "Rolster Technology <rolster.developments@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "build": "npm run clean && tsc -p tsconfig.json && rollup -c rollup.config.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.1",
+    "@rolster/typescript-types": "^4.0.0",
+    "jest": "^29.5.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.32.0",
+    "ts-jest": "^29.1.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rolster-developments/typescript-utils.git"
+  }
+}
