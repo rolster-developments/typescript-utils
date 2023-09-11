@@ -1,6 +1,6 @@
 {
   "name": "@rolster/typescript-utils",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Utilities package compatible with Typescript projects.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/lib.cjs.js",

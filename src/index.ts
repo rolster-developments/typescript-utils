@@ -1,5 +1,6 @@
 export * from './array';
 export * from './constants';
+export * from './currency-format';
 export * from './date';
 export * from './date-elapsed';
 export * from './double';
