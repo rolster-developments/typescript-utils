@@ -1,48 +1,11 @@
+import {
+  DAYS_NAME,
+  DAYS_NAME_MIN,
+  MONTHS_DAYS,
+  MONTHS_NAME,
+  MONTHS_NAME_MIN
+} from './constants';
 import { getFormatForHumans } from './date-elapsed';
-
-export const MonthsName = [
-  'Enero',
-  'Febrero',
-  'Marzo',
-  'Abril',
-  'Mayo',
-  'Junio',
-  'Julio',
-  'Agosto',
-  'Septiembre',
-  'Octubre',
-  'Noviembre',
-  'Diciembre'
-];
-
-export const MonthsNameMin = [
-  'Ene',
-  'Feb',
-  'Mar',
-  'Abr',
-  'May',
-  'Jun',
-  'Jul',
-  'Ago',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dic'
-];
-
-export const MonthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-export const DaysName = [
-  'Domingo',
-  'Lunes',
-  'Martes',
-  'Miércoles',
-  'Jueves',
-  'Viernes',
-  'Sábado'
-];
-
-export const DaysNameMin = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 
 type DateFormat = Record<string, (date: Date) => string>;
 
@@ -51,19 +14,19 @@ const dateFormatters: DateFormat = {
     return completFormat(date.getDate(), 2);
   },
   dw: (date: Date): string => {
-    return DaysName[date.getDay()];
+    return DAYS_NAME[date.getDay()];
   },
   dx: (date: Date): string => {
-    return DaysNameMin[date.getDay()];
+    return DAYS_NAME_MIN[date.getDay()];
   },
   mm: (date: Date): string => {
     return completFormat(date.getMonth() + 1, 2);
   },
   mn: (date: Date): string => {
-    return MonthsName[date.getDay()];
+    return MONTHS_NAME[date.getDay()];
   },
   mx: (date: Date): string => {
-    return MonthsNameMin[date.getMonth()];
+    return MONTHS_NAME_MIN[date.getMonth()];
   },
   aa: (date: Date): string => {
     return completFormat(date.getFullYear(), 4);
@@ -177,7 +140,7 @@ export function getDateWeight(date: Date): number {
 }
 
 export function getDaysMonth(year: number, month: number): number {
-  return month === 1 && isLeapYear(year) ? 29 : MonthsDays[month];
+  return month === 1 && isLeapYear(year) ? 29 : MONTHS_DAYS[month];
 }
 
 export function isLeapYear(year: number): boolean {

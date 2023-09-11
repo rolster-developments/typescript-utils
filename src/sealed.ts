@@ -1,6 +1,4 @@
-export interface StateSealed<R> {
-  [key: string]: (value?: any) => R;
-}
+export type StateSealed<R> = Record<string, (value?: any) => R>;
 
 export class Sealed<R, V, T extends StateSealed<R>> {
   protected constructor(

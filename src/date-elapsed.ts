@@ -1,12 +1,4 @@
-export enum Miliseconds {
-  Year = 31536000000,
-  Month = 2592000000,
-  Week = 604800000,
-  Day = 86400000,
-  Hour = 3600000,
-  Minute = 60000,
-  Second = 1000
-}
+import { MILISECONDS } from './constants';
 
 interface ElapsedTime {
   value: number;
@@ -26,7 +18,7 @@ interface PendingTime {
 }
 
 function createElapsedTime(
-  value: Miliseconds,
+  value: MILISECONDS,
   single: string,
   charPlural = 's',
   plural?: string
@@ -44,13 +36,13 @@ function createElapsedTime(
 }
 
 const elapsedTimes: ElapsedTime[] = [
-  createElapsedTime(Miliseconds.Year, 'año'),
-  createElapsedTime(Miliseconds.Month, 'mes', 'es'),
-  createElapsedTime(Miliseconds.Week, 'semana'),
-  createElapsedTime(Miliseconds.Day, 'día', 's', 'dias'),
-  createElapsedTime(Miliseconds.Hour, 'hora'),
-  createElapsedTime(Miliseconds.Minute, 'minuto'),
-  createElapsedTime(Miliseconds.Second, 'segundo')
+  createElapsedTime(MILISECONDS.YEAR, 'año'),
+  createElapsedTime(MILISECONDS.MONTH, 'mes', 'es'),
+  createElapsedTime(MILISECONDS.WEEK, 'semana'),
+  createElapsedTime(MILISECONDS.DAY, 'día', 's', 'dias'),
+  createElapsedTime(MILISECONDS.HOUR, 'hora'),
+  createElapsedTime(MILISECONDS.MINUTE, 'minuto'),
+  createElapsedTime(MILISECONDS.SECOND, 'segundo')
 ];
 
 export function getFormatForHumans(milliseconds: number): string {
@@ -87,22 +79,22 @@ export function getPendingTime(
   const difference = future.getTime() - initial.getTime();
 
   return {
-    years: Math.floor(difference / Miliseconds.Year),
-    months: Math.floor(difference / Miliseconds.Month),
-    weeks: Math.floor(difference / Miliseconds.Week),
-    days: Math.floor(difference / Miliseconds.Day),
-    hours: Math.floor(difference / Miliseconds.Hour),
-    minutes: Math.floor(difference / Miliseconds.Minute),
-    seconds: Math.floor(difference / Miliseconds.Second)
+    years: Math.floor(difference / MILISECONDS.YEAR),
+    months: Math.floor(difference / MILISECONDS.MONTH),
+    weeks: Math.floor(difference / MILISECONDS.WEEK),
+    days: Math.floor(difference / MILISECONDS.DAY),
+    hours: Math.floor(difference / MILISECONDS.HOUR),
+    minutes: Math.floor(difference / MILISECONDS.MINUTE),
+    seconds: Math.floor(difference / MILISECONDS.SECOND)
   };
 }
 
 export function updateDateWithDays(date: Date, days = 1): Date {
-  return updateDateWithTimestamp(date, days * Miliseconds.Day);
+  return updateDateWithTimestamp(date, days * MILISECONDS.DAY);
 }
 
 export function updateDateWithMonths(date: Date, months = 1): Date {
-  return updateDateWithTimestamp(date, months * Miliseconds.Month);
+  return updateDateWithTimestamp(date, months * MILISECONDS.MONTH);
 }
 
 export function updateDateWithTimestamp(date: Date, timestamp: number): Date {
