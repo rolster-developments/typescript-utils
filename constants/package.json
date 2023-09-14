@@ -1,0 +1,8 @@
+{
+  "name": "@rolster/typescript-utils/constants",
+  "types": "../dist/esm/constants.d.ts",
+  "main": "../dist/cjs/constants.js",
+  "module": "../dist/esm/constants.js",
+  "unpkg": "../dist/es/constants.js",
+  "sideEffects": false
+}

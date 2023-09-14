@@ -7,6 +7,12 @@ interface EachArray<T> {
   stop?: CallStop;
 }
 
+interface MapReduce<E, V> {
+  identifier: (element: E) => string;
+  factory: (element: E) => V;
+  reducer: (element: E, currentValue: V) => void;
+}
+
 class ForEachBreakException<T> extends Error {
   constructor(
     public readonly element: T,
@@ -76,4 +82,32 @@ export function reduceDistinct<T, V>(array: T[], reducer: Reducer<T, V>): V[] {
 
     return result;
   }, []);
+}
+
+export function mapToReduce<E, V>(elements: E[], props: MapReduce<E, V>): V[] {
+  const { factory, identifier, reducer } = props;
+
+  const map = new Map<string, V>();
+
+  function getCurrentValue(element: E): V {
+    const resultId = identifier(element);
+
+    const value = map.get(resultId);
+
+    if (value) {
+      return value;
+    }
+
+    const newValue = factory(element);
+
+    map.set(resultId, newValue);
+
+    return newValue;
+  }
+
+  elements.forEach((element) => {
+    reducer(element, getCurrentValue(element));
+  });
+
+  return Array.from(map.entries()).map(([_, value]) => value);
 }
