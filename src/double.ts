@@ -7,8 +7,8 @@ type DoubleProps = {
 type DoubleValue = string | number | Double | DoubleProps;
 
 type DividerValue = {
-  number1: Double;
-  number2: Double;
+  double1: Double;
+  double2: Double;
   precision?: number;
   places?: boolean;
 };
@@ -80,7 +80,7 @@ export class Double {
   }
 
   public divide(value: DoubleValue): Double {
-    return divide({ number1: this, number2: createDouble(value) });
+    return divide({ double1: this, double2: createDouble(value) });
   }
 
   public module(value: DoubleValue): Double {
@@ -95,8 +95,8 @@ export class Double {
     }
 
     const result = divide({
-      number1: this,
-      number2: double,
+      double1: this,
+      double2: double,
       places: true,
       precision: 0
     }).multiply(double);
@@ -176,11 +176,11 @@ export class Double {
     checkInt32(decimals, 0, MAX_DIGITS);
     checkInt32(roundMode, 0, 8);
 
-    const double = round(this, decimals + getBase10Exp(this) + 1, roundMode);
-    const str = toString(
+    const double = round(this, decimals + base10Exp(this) + 1, roundMode);
+    const str = decimaltoString(
       double.abs(),
       false,
-      decimals + getBase10Exp(double) + 1
+      decimals + base10Exp(double) + 1
     );
 
     return this.isNegative() && !this.isZero() ? `-${str}` : str;
@@ -195,7 +195,7 @@ export class Double {
   }
 
   public toString(): string {
-    return toString(this, isExponent(getExpBase10(this)));
+    return decimaltoString(this, isExponent(base10Exp(this)));
   }
 
   public static create(value: DoubleValue): Double {
@@ -207,61 +207,7 @@ export class Double {
   }
 }
 
-function createDouble(value: DoubleValue): Double {
-  return value instanceof Double ? value : Double.create(value);
-}
-
-function createDoublePropsFromValue(value: DoubleValue): DoubleProps {
-  if (value instanceof Double) {
-    return value.props();
-  }
-
-  if (typeof value === 'number') {
-    return createDoubleFromNumber(value);
-  }
-
-  if (typeof value === 'string') {
-    return createDoubleFromString(value);
-  }
-
-  return value;
-}
-
-function createDoubleFromNumber(value: number): DoubleProps {
-  if (value * 0 !== 0) {
-    throw Error('[DecimalError] Invalid argument: ' + value);
-  }
-
-  if (value === 0) {
-    return DOUBLE_ZERO_PROPS;
-  }
-
-  let signed = SIGNED_POSITIVE;
-
-  if (value < 0) {
-    value = -value;
-    signed = SIGNED_NEGATIVE;
-  }
-
-  return parseDouble(signed, value.toString());
-}
-
-function createDoubleFromString(value: string): DoubleProps {
-  let signed = SIGNED_POSITIVE;
-
-  if (value.charCodeAt(0) === CHAR_NEGATIVE) {
-    value = value.slice(1);
-    signed = SIGNED_NEGATIVE;
-  }
-
-  if (!DOUBLE_REGEX.test(value)) {
-    throw Error('[DecimalError] Invalid argument: ' + value);
-  }
-
-  return parseDouble(signed, value);
-}
-
-function parseDouble(signed: number, doubleStr: string): DoubleProps {
+const parseDouble = (signed: number, doubleStr: string): DoubleProps => {
   let expStr = doubleStr.indexOf('.');
   let i = doubleStr.search(/e/i);
   let length = doubleStr.length;
@@ -337,10 +283,64 @@ function parseDouble(signed: number, doubleStr: string): DoubleProps {
   } else {
     return DOUBLE_ZERO_PROPS;
   }
-}
+};
 
-function plus(number1: Double, number2: Double): Double {
-  if (number1.isZero() && number2.isZero()) {
+const createDouble = (value: DoubleValue): Double => {
+  return value instanceof Double ? value : Double.create(value);
+};
+
+const createDoubleFromNumber = (value: number): DoubleProps => {
+  if (value * 0 !== 0) {
+    throw Error('[DecimalError] Invalid argument: ' + value);
+  }
+
+  if (value === 0) {
+    return DOUBLE_ZERO_PROPS;
+  }
+
+  let signed = SIGNED_POSITIVE;
+
+  if (value < 0) {
+    value = -value;
+    signed = SIGNED_NEGATIVE;
+  }
+
+  return parseDouble(signed, value.toString());
+};
+
+const createDoublePropsFromValue = (value: DoubleValue): DoubleProps => {
+  if (value instanceof Double) {
+    return value.props();
+  }
+
+  if (typeof value === 'number') {
+    return createDoubleFromNumber(value);
+  }
+
+  if (typeof value === 'string') {
+    return createDoubleFromString(value);
+  }
+
+  return value;
+};
+
+const createDoubleFromString = (value: string): DoubleProps => {
+  let signed = SIGNED_POSITIVE;
+
+  if (value.charCodeAt(0) === CHAR_NEGATIVE) {
+    value = value.slice(1);
+    signed = SIGNED_NEGATIVE;
+  }
+
+  if (!DOUBLE_REGEX.test(value)) {
+    throw Error('[DecimalError] Invalid argument: ' + value);
+  }
+
+  return parseDouble(signed, value);
+};
+
+const plus = (double1: Double, double2: Double): Double => {
+  if (double1.isZero() && double2.isZero()) {
     return Double.zero();
   }
 
@@ -348,11 +348,11 @@ function plus(number1: Double, number2: Double): Double {
   let decimalsTemp;
   let length;
 
-  let decimals1 = [...number1.decimals].slice();
-  let decimals2 = [...number2.decimals];
+  let decimals1 = [...double1.decimals].slice();
+  let decimals2 = [...double2.decimals];
 
-  let exp1 = number1.exp;
-  let exp2 = number2.exp;
+  let exp1 = double1.exp;
+  let exp2 = double2.exp;
   let expDiff = exp1 - exp2;
 
   if (expDiff) {
@@ -414,23 +414,23 @@ function plus(number1: Double, number2: Double): Double {
   return Double.create({
     decimals: decimals1,
     exp: exp2,
-    signed: number1.signed
+    signed: double1.signed
   });
-}
+};
 
-function minus(number1: Double, number2: Double): Double {
-  if (number1.isZero() && number2.isZero()) {
+const minus = (double1: Double, double2: Double): Double => {
+  if (double1.isZero() && double2.isZero()) {
     return Double.zero();
   }
 
   let decimalsTemp, index1, index2, length, verify;
 
-  let decimals1 = [...number1.decimals].slice();
-  let decimals2 = [...number2.decimals];
+  let decimals1 = [...double1.decimals].slice();
+  let decimals2 = [...double2.decimals];
 
-  let signed = number2.signed;
-  let exp1 = number1.exp;
-  let exp2 = number2.exp;
+  let signed = double2.signed;
+  let exp1 = double1.exp;
+  let exp2 = double2.exp;
   let expDiff = exp1 - exp2;
 
   if (expDiff) {
@@ -521,19 +521,19 @@ function minus(number1: Double, number2: Double): Double {
   }
 
   return Double.create({ decimals: decimals1, exp: exp2, signed });
-}
+};
 
-function multiply(number1: Double, number2: Double): Double {
-  if (number1.isZero() || number2.isZero()) {
+const multiply = (double1: Double, double2: Double): Double => {
+  if (double1.isZero() || double2.isZero()) {
     return Double.zero();
   }
 
-  const signed = number1.signed * number2.signed;
+  const signed = double1.signed * double2.signed;
 
   let index1, lengthTemp;
-  let exp = number1.exp + number2.exp;
-  let decimals1 = [...number1.decimals];
-  let decimals2 = [...number2.decimals];
+  let exp = double1.exp + double2.exp;
+  let decimals1 = [...double1.decimals];
+  let decimals2 = [...double2.decimals];
   let decimalsTemp = [];
   let length1 = decimals1.length;
   let length2 = decimals2.length;
@@ -582,28 +582,33 @@ function multiply(number1: Double, number2: Double): Double {
   }
 
   return Double.create({ decimals: decimalsTemp, exp: exp, signed });
-}
+};
 
-function divide({ number1, number2, places, precision }: DividerValue): Double {
-  if (number2.isZero()) {
+const divide = ({
+  double1,
+  double2,
+  places,
+  precision
+}: DividerValue): Double => {
+  if (double2.isZero()) {
     throw Error('[DecimalError] Division by zero');
   }
 
-  if (number1.isZero()) {
+  if (double1.isZero()) {
     return Double.zero();
   }
 
   const signed =
-    number1.signed == number2.signed ? SIGNED_POSITIVE : SIGNED_NEGATIVE;
+    double1.signed == double2.signed ? SIGNED_POSITIVE : SIGNED_NEGATIVE;
 
   let index1, index2, precTemp;
-  let decimals1 = [...number1.decimals];
-  let decimals2 = [...number2.decimals];
+  let decimals1 = [...double1.decimals];
+  let decimals2 = [...double2.decimals];
   let decimals: number[] = [];
 
-  let length1 = number1.decimals.length;
-  let length2 = number2.decimals.length;
-  let exp = number1.exp - number2.exp;
+  let length1 = double1.decimals.length;
+  let length2 = double2.decimals.length;
+  let exp = double1.exp - double2.exp;
 
   for (index1 = 0; decimals2[index1] == (decimals1[index1] || 0); ) {
     ++index1;
@@ -616,7 +621,7 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
   if (!precision) {
     precTemp = precision = PRECISION;
   } else if (places) {
-    precTemp = precision + (getExpBase10(number1) - getExpBase10(number2)) + 1;
+    precTemp = precision + (base10Exp(double1) - base10Exp(double2)) + 1;
   } else {
     precTemp = precision;
   }
@@ -661,14 +666,14 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
     resetDecimals.unshift(0);
     let first2 = decimals2[0];
 
-    if (number2.decimals[1] >= BASE / 2) {
+    if (double2.decimals[1] >= BASE / 2) {
       ++first2;
     }
 
     do {
       index2 = 0;
       let result = compare(
-        number2.decimals,
+        double2.decimals,
         redimDecimals,
         length2,
         redimLength
@@ -763,14 +768,12 @@ function divide({ number1, number2, places, precision }: DividerValue): Double {
 
   const double = Double.create({ decimals, exp, signed });
 
-  const precisionDef = places
-    ? precision + getExpBase10(double) + 1
-    : precision;
+  const precisionDef = places ? precision + base10Exp(double) + 1 : precision;
 
   return round(double, precisionDef);
-}
+};
 
-function multiplyInteger(decimals: number[], size: number): number[] {
+const multiplyInteger = (decimals: number[], size: number): number[] => {
   let i = decimals.length;
   let carry = 0;
   let temp;
@@ -786,9 +789,9 @@ function multiplyInteger(decimals: number[], size: number): number[] {
   }
 
   return decimals;
-}
+};
 
-function compareTo(number1: Double, number2: Double): number {
+const compareTo = (number1: Double, number2: Double): number => {
   if (number1.signed !== number2.signed) {
     return number1.signed || -number2.signed;
   }
@@ -813,14 +816,14 @@ function compareTo(number1: Double, number2: Double): number {
     : length1 > length2 !== number1.signed < 0
     ? 1
     : -1;
-}
+};
 
-function compare(
+const compare = (
   decimals1: number[],
   decimals2: number[],
   length1: number,
   length2: number
-): number {
+): number => {
   if (length1 != length2) {
     return length1 > length2 ? 1 : -1;
   }
@@ -836,13 +839,13 @@ function compare(
   }
 
   return result;
-}
+};
 
-function subtract(
+const subtract = (
   numbers1: number[],
   numbers2: number[],
   length: number
-): void {
+): void => {
   for (let i = 0; length--; ) {
     numbers1[length] -= i;
     i = numbers1[length] < numbers2[length] ? 1 : 0;
@@ -852,9 +855,9 @@ function subtract(
   for (; !numbers1[0] && numbers1.length > 1; ) {
     numbers1.shift();
   }
-}
+};
 
-function round(double: Double, precisionDef: number, rm?: any): Double {
+const round = (double: Double, precisionDef: number, rm?: any): Double => {
   const decimals = [...double.decimals];
   let numberDigits = 1;
 
@@ -918,7 +921,7 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
 
   if (precisionDef < 1 || !decimals[0]) {
     if (doRound) {
-      const exp10 = getExpBase10(double);
+      const exp10 = base10Exp(double);
 
       precisionDef = precisionDef - exp10 - 1;
 
@@ -981,18 +984,20 @@ function round(double: Double, precisionDef: number, rm?: any): Double {
   }
 
   if (double.exp > MAX_EXPONENT || double.exp < -MAX_EXPONENT) {
-    throw Error(
-      '[DecimalError] Exponent out of range: ' + getExpBase10(double)
-    );
+    throw Error('[DecimalError] Exponent out of range: ' + base10Exp(double));
   }
 
   return Double.create({ decimals, exp, signed });
-}
+};
 
-function toString(double: Double, isExponent: boolean, sd?: number): string {
+const decimaltoString = (
+  double: Double,
+  isExponent: boolean,
+  sd?: number
+): string => {
   let digits = digitsToString(double.decimals);
   let length = digits.length;
-  let exp = getExpBase10(double);
+  let exp = base10Exp(double);
   let countZero;
 
   if (isExponent) {
@@ -1031,35 +1036,24 @@ function toString(double: Double, isExponent: boolean, sd?: number): string {
   }
 
   return double.signed < 0 ? '-' + digits : digits;
-}
+};
 
-function isExponent(exponent: number): boolean {
+const isExponent = (exponent: number): boolean => {
   return exponent <= EXPONENT_NEGATIVE || exponent >= EXPONENT_POSITIVE;
-}
+};
 
-function getExpBase10(double: Double): number {
-  let exp = double.exp * LOG_BASE;
-  let dec = double.decimals[0];
-
-  for (; dec >= 10; dec /= 10) {
-    exp++;
-  }
-
-  return exp;
-}
-
-function getBase10Exp(number: Double): number {
-  let exp = number.exp * LOG_BASE;
-  let first = number.decimals[0];
+const base10Exp = (decimal: Double): number => {
+  let exp = decimal.exp * LOG_BASE;
+  let first = decimal.decimals[0];
 
   for (; first >= 10; first /= 10) {
     exp++;
   }
 
   return exp;
-}
+};
 
-function digitsToString(decimals: number[]): string {
+const digitsToString = (decimals: number[]): string => {
   let indexLastWord = decimals.length - 1;
   let str = '';
   let word = decimals[0];
@@ -1095,9 +1089,9 @@ function digitsToString(decimals: number[]): string {
   }
 
   return str + word;
-}
+};
 
-function padZeroString(size: number): string {
+const padZeroString = (size: number): string => {
   let zeroString = '';
 
   for (; size--; ) {
@@ -1105,10 +1099,10 @@ function padZeroString(size: number): string {
   }
 
   return zeroString;
-}
+};
 
-function checkInt32(i: number, min: number, max: number): void {
+const checkInt32 = (i: number, min: number, max: number): void => {
   if (i !== ~~i || i < min || i > max) {
     throw Error('[DecimalError] Invalid argument: ' + i);
   }
-}
+};

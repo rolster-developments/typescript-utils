@@ -13,41 +13,30 @@ const plugins = [
   })
 ];
 
+const createConfiguration = (file) => {
+  return {
+    input: [`dist/esm/${file}.js`],
+    output: [
+      {
+        file: `dist/cjs/${file}.js`,
+        format: 'cjs',
+        sourcemap: true,
+        inlineDynamicImports: true
+      },
+      {
+        file: `dist/es/${file}.js`,
+        format: 'es',
+        sourcemap: true,
+        inlineDynamicImports: true
+      }
+    ],
+    plugins
+  };
+};
+
 export default [
-  {
-    plugins,
-    input: ['dist/esm/index.js'],
-    output: [
-      {
-        file: 'dist/es/index.js',
-        format: 'es',
-        sourcemap: true,
-        inlineDynamicImports: true
-      },
-      {
-        file: 'dist/cjs/index.js',
-        format: 'cjs',
-        sourcemap: true,
-        inlineDynamicImports: true
-      }
-    ]
-  },
-  {
-    plugins,
-    input: ['dist/esm/constants.js'],
-    output: [
-      {
-        file: 'dist/es/constants.js',
-        format: 'es',
-        sourcemap: true,
-        inlineDynamicImports: true
-      },
-      {
-        file: 'dist/cjs/constants.js',
-        format: 'cjs',
-        sourcemap: true,
-        inlineDynamicImports: true
-      }
-    ]
-  }
+  createConfiguration('index'),
+  createConfiguration('array'),
+  createConfiguration('date'),
+  createConfiguration('string')
 ];

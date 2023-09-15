@@ -5,17 +5,17 @@ const falsyValue = ['false', 'undefined', '0', 0];
 
 type PromisesFn<T extends any> = () => Promise<T>;
 
-type PromisesConfig<T extends any> = {
-  error: (_: any) => void;
+type PromisesProps<T extends any> = {
+  error: (error: any) => void;
   index: number;
   promises: PromisesFn<T>[];
   result: T[];
-  success: (_: T[]) => void;
+  success: (results: T[]) => void;
 };
 
 type Calleable<T> = Undefined<(...args: any) => T>;
 
-function clone<A>(object: A, caches: unknown[]): A {
+const clone = <A>(object: A, caches: unknown[]): A => {
   if (typeof object !== 'object') {
     return object;
   }
@@ -46,49 +46,47 @@ function clone<A>(object: A, caches: unknown[]): A {
   }
 
   return cloneObject;
-}
+};
 
-function executePromises<T extends any>(config: PromisesConfig<T>): void {
-  const { error, index, promises, result, success } = config;
+const executePromises = <T extends any>(props: PromisesProps<T>): void => {
+  const { error, index, promises, result, success } = props;
 
   if (index === promises.length) {
-    success(result);
-  } else {
-    new Promise(() => {
-      promises[index]()
-        .then((value) => {
-          executePromises({
-            error,
-            index: index + 1,
-            promises,
-            result: [...result, value],
-            success
-          });
-        })
-        .catch((ex) => {
-          error(ex);
-        });
-    });
+    return success(result);
   }
-}
 
-export function isDefined(object: any): boolean {
+  const callback = promises[index];
+
+  new Promise(() => {
+    callback()
+      .then((value) =>
+        executePromises({
+          ...props,
+          index: index + 1,
+          result: [...result, value]
+        })
+      )
+      .catch((ex) => error(ex));
+  });
+};
+
+export const isDefined = (object: any): boolean => {
   return typeof object !== 'undefined' && object !== null;
-}
+};
 
-export function isUndefined(object: any): boolean {
+export const isUndefined = (object: any): boolean => {
   return !isDefined(object);
-}
+};
 
-export function parseBoolean(value: any): boolean {
+export const parseBoolean = (value: any): boolean => {
   return !(isUndefined(value) || value === false || falsyValue.includes(value));
-}
+};
 
-export function deepClone<A>(object: A): A {
+export const deepClone = <A>(object: A): A => {
   return clone(object, []);
-}
+};
 
-export function deepFreeze<A>(object: A): Readonly<A> {
+export const deepFreeze = <A>(object: A): Readonly<A> => {
   for (const prop in object) {
     const value = object[prop];
 
@@ -98,21 +96,23 @@ export function deepFreeze<A>(object: A): Readonly<A> {
   }
 
   return Object.freeze(object);
-}
+};
 
-export function parse<T>(value: string): T {
+export const parse = <T>(value: string): T => {
   try {
     return JSON.parse(value) as T;
   } catch {
     return value as unknown as T;
   }
-}
+};
 
-export function promiseFrom<M>(value: M | Promise<M>): Promise<M> {
+export const fromPromise = <M>(value: M | Promise<M>): Promise<M> => {
   return value instanceof Promise ? value : Promise.resolve(value);
-}
+};
 
-export function promisesZip<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
+export const zipPromise = <T = any>(
+  promises: PromisesFn<T>[]
+): Promise<T[]> => {
   return promises.length
     ? new Promise((resolve, reject) => {
         executePromises({
@@ -128,11 +128,11 @@ export function promisesZip<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
         });
       })
     : Promise.resolve([]);
-}
+};
 
-export function callback<T = any>(
+export const callback = <T = any>(
   call: Calleable<T>,
   ...args: any
-): Undefined<T> {
+): Undefined<T> => {
   return typeof call !== 'function' ? undefined : call.apply(call, args);
-}
+};

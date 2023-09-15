@@ -4,7 +4,7 @@ interface Currency {
   symbol?: string;
 }
 
-export function currencyFormat(currency: Currency): string {
+export const currencyFormat = (currency: Currency): string => {
   const { value, decimals, symbol } = currency;
 
   const [integer, decimal] = Math.abs(value).toString().split('.');
@@ -33,4 +33,4 @@ export function currencyFormat(currency: Currency): string {
   }
 
   return symbol ? `${symbol} ${result}` : result;
-}
+};

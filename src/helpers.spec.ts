@@ -1,4 +1,4 @@
-import { callback } from './utils';
+import { callback } from './helpers';
 
 describe('Utils', () => {
   it('should calculate value successful', () => {

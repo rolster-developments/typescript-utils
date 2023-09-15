@@ -1,18 +1,18 @@
 import { firstElement, lastElement } from './array';
 
-export function firstChar(value: string): string {
+export const firstChar = (value: string): string => {
   return value.length === 0 ? '' : value.charAt(0);
-}
+};
 
-export function lastChar(value: string): string {
+export const lastChar = (value: string): string => {
   return value.length ? '' : value.charAt(value.length - 1);
-}
+};
 
-export function hasPattern(
+export const hasPattern = (
   word: string,
   pattern: string,
   force = false
-): boolean {
+): boolean => {
   let filter = pattern.toLowerCase();
   let test = word.toLowerCase();
 
@@ -22,9 +22,9 @@ export function hasPattern(
   }
 
   return !!test.match(`^.*${filter}.*$`);
-}
+};
 
-export function normalize(word: string): string {
+export const normalize = (word: string): string => {
   return word
     .slice()
     .replace('á', 'a')
@@ -37,17 +37,17 @@ export function normalize(word: string): string {
     .replace('Ó', 'O')
     .replace('ú', 'u')
     .replace('Ú', 'U');
-}
+};
 
-export function getInitials(word: string, size = 2): string {
-  const valueSplit = word.split(' ');
+export const initials = (word: string, size = 2): string => {
+  const split = word.split(' ');
 
-  if (valueSplit.length === 1) {
+  if (split.length === 1) {
     return word.slice(0, size).toUpperCase();
   }
 
-  const firstValue = firstElement(valueSplit) as string;
-  const lastValue = lastElement(valueSplit) as string;
+  const firstValue = firstElement(split) as string;
+  const lastValue = lastElement(split) as string;
 
   return `${firstChar(firstValue)}${firstChar(lastValue)}`.toUpperCase();
-}
+};
