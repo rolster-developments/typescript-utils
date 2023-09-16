@@ -1,7 +1,7 @@
 {
-  "name": "@rolster/typescript-utils",
-  "version": "4.1.0",
-  "description": "Utilities package compatible with Typescript projects.",
+  "name": "@rolster/helpers-advanced",
+  "version": "1.0.0",
+  "description": "Advanced utilities package compatible with Typescript projects.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
   "unpkg": "dist/es/index.js",
@@ -18,32 +18,6 @@
     "dist/",
     "constants/"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/esm/index.d.ts",
-      "node": "./dist/cjs/index.js",
-      "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
-    },
-    "./array": {
-      "types": "./dist/esm/array.d.ts",
-      "node": "./dist/cjs/array.js",
-      "require": "./dist/cjs/array.js",
-      "default": "./dist/esm/array.js"
-    },
-    "./date": {
-      "types": "./dist/esm/date.d.ts",
-      "node": "./dist/cjs/date.js",
-      "require": "./dist/cjs/date.js",
-      "default": "./dist/esm/date.js"
-    },
-    "./string": {
-      "types": "./dist/esm/string.d.ts",
-      "node": "./dist/cjs/string.js",
-      "require": "./dist/cjs/string.js",
-      "default": "./dist/esm/string.js"
-    }
-  },
   "scripts": {
     "prettier": "prettier . --write",
     "clean": "rimraf ./dist",
@@ -68,6 +42,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rolster-developments/typescript-utils.git"
+    "url": "https://github.com/rolster-developments/typescript-advanced.git"
   }
 }

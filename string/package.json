@@ -1,8 +1,0 @@
-{
-  "name": "@rolster/typescript-utils/string",
-  "types": "../dist/esm/string.d.ts",
-  "main": "../dist/cjs/string.js",
-  "module": "../dist/esm/string.js",
-  "unpkg": "../dist/es/string.js",
-  "sideEffects": false
-}

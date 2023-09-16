@@ -1,8 +1,0 @@
-{
-  "name": "@rolster/typescript-utils/date",
-  "types": "../dist/esm/date.d.ts",
-  "main": "../dist/cjs/date.js",
-  "module": "../dist/esm/date.js",
-  "unpkg": "../dist/es/date.js",
-  "sideEffects": false
-}

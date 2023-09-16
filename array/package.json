@@ -1,8 +1,0 @@
-{
-  "name": "@rolster/typescript-utils/array",
-  "types": "../dist/esm/array.d.ts",
-  "main": "../dist/cjs/array.js",
-  "module": "../dist/esm/array.js",
-  "unpkg": "../dist/es/array.js",
-  "sideEffects": false
-}
