@@ -15,8 +15,7 @@
     }
   ],
   "files": [
-    "dist/",
-    "constants/"
+    "dist/"
   ],
   "scripts": {
     "prettier": "prettier . --write",
