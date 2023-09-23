@@ -1,6 +1,6 @@
-import { Sealed } from './sealed';
+import { PartialSealed } from './sealed';
 
-export class Either<S, F, V = any> extends Sealed<
+export class Either<S, F, V = any> extends PartialSealed<
   V,
   S | F,
   {

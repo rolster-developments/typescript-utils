@@ -1,7 +1,10 @@
-const primitives = [Date, RegExp, Function, String, Boolean, Number];
-const prototypeToString = Object.prototype.toString;
+const PRIMITIVES = [Date, RegExp, Function, String, Boolean, Number];
 
-const falsyValue = ['false', 'undefined', '0', 0];
+const SLICE_SIZE = 512;
+
+const FALSY_VALUE = ['false', 'undefined', '0', 0];
+
+const prototypeToString = Object.prototype.toString;
 
 type PromisesFn<T extends any> = () => Promise<T>;
 
@@ -35,7 +38,7 @@ const clone = <A>(object: A, caches: unknown[]): A => {
   const prototypeObject = Object.getPrototypeOf(object);
   const ConstructorObject = prototypeObject.constructor;
 
-  if (primitives.includes(ConstructorObject)) {
+  if (PRIMITIVES.includes(ConstructorObject)) {
     return new ConstructorObject(object);
   }
 
@@ -66,7 +69,7 @@ const executePromises = <T extends any>(props: PromisesProps<T>): void => {
           result: [...result, value]
         })
       )
-      .catch((ex) => error(ex));
+      .catch((err) => error(err));
   });
 };
 
@@ -79,7 +82,11 @@ export const isUndefined = (object: any): boolean => {
 };
 
 export const parseBoolean = (value: any): boolean => {
-  return !(isUndefined(value) || value === false || falsyValue.includes(value));
+  return !(
+    isUndefined(value) ||
+    value === false ||
+    FALSY_VALUE.includes(value)
+  );
 };
 
 export const deepClone = <A>(object: A): A => {
@@ -135,4 +142,25 @@ export const callback = <T = any>(
   ...args: any
 ): Undefined<T> => {
   return typeof call !== 'function' ? undefined : call.apply(call, args);
+};
+
+export const base64ToBlob = (data64: string, mimeType: string): Blob => {
+  const result64 = data64.replace(/^[^,]+,/, '').replace(/\s/g, '');
+
+  const byteCharacters = window.atob(result64);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += SLICE_SIZE) {
+    const slice = byteCharacters.slice(offset, offset + SLICE_SIZE);
+    const byteNumbers = new Array(slice.length);
+
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, { type: mimeType });
 };
