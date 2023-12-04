@@ -1,6 +1,6 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 
 const plugins = [
   commonjs(),
@@ -13,21 +13,27 @@ const plugins = [
   })
 ];
 
-export default {
-  input: ['dist/esm/index.js'],
-  output: [
-    {
-      file: 'dist/cjs/index.js',
-      format: 'cjs',
-      sourcemap: true,
-      inlineDynamicImports: true
-    },
-    {
-      file: 'dist/es/index.js',
-      format: 'es',
-      sourcemap: true,
-      inlineDynamicImports: true
-    }
-  ],
-  plugins
+const rollupTs = (file) => {
+  return {
+    input: [`dist/esm/${file}.js`],
+    output: [
+      {
+        file: `dist/cjs/${file}.js`,
+        format: 'cjs',
+        sourcemap: true,
+        inlineDynamicImports: true
+      },
+      {
+        file: `dist/es/${file}.js`,
+        format: 'es',
+        sourcemap: true,
+        inlineDynamicImports: true
+      }
+    ],
+    plugins
+  };
 };
+
+const exports = ['index'];
+
+export default [...exports.map((file) => rollupTs(file))];
