@@ -137,6 +137,10 @@ export const zipPromise = <T = any>(
     : Promise.resolve([]);
 };
 
+export const voidPromise = <T>(promise: Promise<T>): Promise<void> => {
+  return promise.then(() => undefined).catch(() => undefined);
+};
+
 export const callback = <T = any>(
   call: Calleable<T>,
   ...args: any

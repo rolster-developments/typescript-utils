@@ -119,7 +119,7 @@ export class Double {
       return false;
     }
 
-    for (let i = 0; i < length; ++i) {
+    for (let i = 0; i < this.decimals.length; ++i) {
       if (this.decimals[i] !== double.decimals[i]) {
         return false;
       }
