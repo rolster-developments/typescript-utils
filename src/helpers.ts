@@ -152,6 +152,19 @@ export const voidPromise = <T>(
     });
 };
 
+export const catchPromise = <T>(
+  promise: Promise<T>,
+  printError = false
+): Promise<Undefined<T>> => {
+  return promise.catch((err) => {
+    if (printError) {
+      console.log(err);
+    }
+
+    return undefined;
+  });
+};
+
 export const callback = <T = any>(
   call: Calleable<T>,
   ...args: any
