@@ -186,12 +186,42 @@ export class Double {
     return this.isNegative() && !this.isZero() ? `-${str}` : str;
   }
 
+  public roundCeil(): Double {
+    const { decimals, exp, signed } = this;
+
+    const [integer, decimal] = decimals;
+
+    return new Double({
+      decimals: [decimal && decimal > 0 ? integer + 1 : integer],
+      exp,
+      signed
+    });
+  }
+
+  public roundFloor(): Double {
+    const { decimals, exp, signed } = this;
+
+    const [integer] = decimals;
+
+    return new Double({
+      decimals: [integer],
+      exp,
+      signed
+    });
+  }
+
   public clone(): Double {
     return new Double(this.props());
   }
 
   public props(): DoubleProps {
-    return { decimals: [...this.decimals], exp: this.exp, signed: this.signed };
+    const { decimals, exp, signed } = this;
+
+    return {
+      decimals: [...decimals],
+      exp,
+      signed
+    };
   }
 
   public toString(): string {
