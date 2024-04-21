@@ -137,6 +137,21 @@ export const zipPromise = <T = any>(
     : Promise.resolve([]);
 };
 
+export const successPromise = <T>(
+  promise: Promise<T>,
+  printError = false
+): Promise<void> => {
+  return promise
+    .then(() => undefined)
+    .catch((err) => {
+      if (printError) {
+        console.log(err);
+      }
+
+      throw err;
+    });
+};
+
 export const voidPromise = <T>(
   promise: Promise<T>,
   printError = false
