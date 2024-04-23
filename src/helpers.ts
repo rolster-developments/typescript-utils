@@ -113,6 +113,10 @@ export const parse = <T>(value: string): T => {
   }
 };
 
+export const evalValueOrFunction = <T>(value: ValueOrFunction<T>): T => {
+  return typeof value === 'function' ? (value as Function)() : value;
+};
+
 export const fromPromise = <M>(value: M | Promise<M>): Promise<M> => {
   return value instanceof Promise ? value : Promise.resolve(value);
 };
