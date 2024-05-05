@@ -39,9 +39,7 @@ export class ScrollerElement {
   }
 
   public get verticalPercentage(): number {
-    const height = this.scrollHeight - this.clientHeight;
-
-    return (this.scrollTop / height) * 100;
+    return (this.scrollTop / this.scrollHeight - this.clientHeight) * 100;
   }
 
   public get horizontalStart(): boolean {
@@ -55,8 +53,6 @@ export class ScrollerElement {
   }
 
   public get horizontalPercentage(): number {
-    const width = this.scrollWidth - this.clientWidth;
-
-    return (this.scrollLeft / width) * 100;
+    return (this.scrollLeft / this.scrollWidth - this.clientWidth) * 100;
   }
 }

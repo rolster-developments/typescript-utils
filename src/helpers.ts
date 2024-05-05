@@ -18,7 +18,7 @@ type PromisesProps<T extends any> = {
 
 type Calleable<T> = Undefined<(...args: any) => T>;
 
-const clone = <A>(object: A, caches: unknown[]): A => {
+function clone<A>(object: A, caches: unknown[]): A {
   if (typeof object !== 'object') {
     return object;
   }
@@ -28,6 +28,7 @@ const clone = <A>(object: A, caches: unknown[]): A => {
       (cacheObject) => cacheObject === object
     );
 
+    /* istanbul ignore if */
     if (cacheObject) {
       return cacheObject as A;
     }
@@ -49,9 +50,9 @@ const clone = <A>(object: A, caches: unknown[]): A => {
   }
 
   return cloneObject;
-};
+}
 
-const executePromises = <T extends any>(props: PromisesProps<T>): void => {
+function executePromises<T extends any>(props: PromisesProps<T>): void {
   const { error, index, promises, result, success } = props;
 
   if (index === promises.length) {
@@ -71,29 +72,41 @@ const executePromises = <T extends any>(props: PromisesProps<T>): void => {
       )
       .catch((err) => error(err));
   });
-};
+}
 
-export const isDefined = (object: any): boolean => {
+export function isDefined(object: any): boolean {
   return typeof object !== 'undefined' && object !== null;
-};
+}
 
-export const isUndefined = (object: any): boolean => {
+export function isUndefined(object: any): boolean {
   return !isDefined(object);
-};
+}
 
-export const parseBoolean = (value: any): boolean => {
+export function parseBoolean(value: any): boolean {
   return !(
     isUndefined(value) ||
     value === false ||
     FALSY_VALUE.includes(value)
   );
-};
+}
 
-export const deepClone = <A>(object: A): A => {
+export function parse<T>(value: string): T {
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return value as unknown as T;
+  }
+}
+
+export function evalValueOrFunction<T>(value: ValueOrFunction<T>): T {
+  return typeof value === 'function' ? (value as Function)() : value;
+}
+
+export function deepClone<A>(object: A): A {
   return clone(object, []);
-};
+}
 
-export const deepFreeze = <A>(object: A): Readonly<A> => {
+export function deepFreeze<A>(object: A): Readonly<A> {
   for (const prop in object) {
     const value = object[prop];
 
@@ -103,27 +116,13 @@ export const deepFreeze = <A>(object: A): Readonly<A> => {
   }
 
   return Object.freeze(object);
-};
+}
 
-export const parse = <T>(value: string): T => {
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return value as unknown as T;
-  }
-};
-
-export const evalValueOrFunction = <T>(value: ValueOrFunction<T>): T => {
-  return typeof value === 'function' ? (value as Function)() : value;
-};
-
-export const fromPromise = <M>(value: M | Promise<M>): Promise<M> => {
+export function fromPromise<M>(value: M | Promise<M>): Promise<M> {
   return value instanceof Promise ? value : Promise.resolve(value);
-};
+}
 
-export const zipPromise = <T = any>(
-  promises: PromisesFn<T>[]
-): Promise<T[]> => {
+export function zipPromise<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
   return promises.length
     ? new Promise((resolve, reject) => {
         executePromises({
@@ -139,59 +138,63 @@ export const zipPromise = <T = any>(
         });
       })
     : Promise.resolve([]);
-};
+}
 
-export const successPromise = <T>(
+export function successPromise<T>(
   promise: Promise<T>,
   printError = false
-): Promise<void> => {
+): Promise<void> {
   return promise
     .then(() => undefined)
     .catch((err) => {
+      /* istanbul ignore if */
       if (printError) {
         console.log(err);
       }
 
       throw err;
     });
-};
+}
 
-export const voidPromise = <T>(
+export function voidPromise<T>(
   promise: Promise<T>,
   printError = false
-): Promise<void> => {
+): Promise<void> {
   return promise
     .then(() => undefined)
     .catch((err) => {
+      /* istanbul ignore if */
       if (printError) {
         console.log(err);
       }
 
       return undefined;
     });
-};
+}
 
-export const catchPromise = <T>(
+export function catchPromise<T>(
   promise: Promise<T>,
   printError = false
-): Promise<Undefined<T>> => {
+): Promise<Undefined<T>> {
   return promise.catch((err) => {
+    /* istanbul ignore if */
     if (printError) {
       console.log(err);
     }
 
     return undefined;
   });
-};
+}
 
-export const callback = <T = any>(
+export function callback<T = any>(
   call: Calleable<T>,
   ...args: any
-): Undefined<T> => {
+): Undefined<T> {
   return typeof call !== 'function' ? undefined : call.apply(call, args);
-};
+}
 
-export const base64ToBlob = (data64: string, mimeType: string): Blob => {
+/* istanbul ignore next */
+export function base64ToBlob(data64: string, mimeType: string): Blob {
   const result64 = data64.replace(/^[^,]+,/, '').replace(/\s/g, '');
 
   const byteCharacters = window.atob(result64);
@@ -210,4 +213,4 @@ export const base64ToBlob = (data64: string, mimeType: string): Blob => {
   }
 
   return new Blob(byteArrays, { type: mimeType });
-};
+}

@@ -1,5 +1,3 @@
-import { Optional } from './optional';
-
 class QuequeElement<T> {
   private nextElement?: QuequeElement<T>;
 
@@ -26,30 +24,30 @@ export class Queque<T> {
   }
 
   public enqueue(value: T): void {
-    const newElement = new QuequeElement(value);
+    const element = new QuequeElement(value);
 
     if (!this.head) {
-      this.head = newElement;
+      this.head = element;
     } else if (this.tail) {
-      this.tail.next = newElement;
+      this.tail.next = element;
     }
 
-    this.tail = newElement;
+    this.tail = element;
 
     this.lengthValue++;
   }
 
-  public dequeue(): Optional<T> {
-    if (this.head) {
-      const value = this.head.value;
-
-      this.head = this.head.next;
-
-      this.lengthValue--;
-
-      return Optional.of(value);
+  public dequeue(): Undefined<T> {
+    if (!this.head) {
+      return undefined;
     }
 
-    return Optional.empty();
+    const { next, value } = this.head;
+
+    this.head = next;
+
+    this.lengthValue--;
+
+    return value;
   }
 }

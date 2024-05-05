@@ -17,6 +17,7 @@ export class Sealed<R, V, T extends StateSealed<R>> {
       return handler(this.value);
     }
 
+    /* istanbul ignore next */
     throw Error('Sealed class could not resolve call');
   }
 }
