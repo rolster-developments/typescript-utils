@@ -5,8 +5,8 @@ import {
   deepFreeze,
   evalValueOrFunction,
   fromPromise,
-  isDefined,
-  isUndefined,
+  itIsDefined,
+  itIsUndefined,
   parse,
   parseBoolean,
   successPromise,
@@ -45,19 +45,19 @@ class Person {
 
 describe('Helpers', () => {
   it('should execute test of "isDefined" successful', () => {
-    expect(isDefined('Daniel')).toBe(true);
-    expect(isDefined(24)).toBe(true);
-    expect(isDefined(new Date())).toBe(true);
-    expect(isDefined(undefined)).toBe(false);
-    expect(isDefined(null)).toBe(false);
+    expect(itIsDefined('Daniel')).toBe(true);
+    expect(itIsDefined(24)).toBe(true);
+    expect(itIsDefined(new Date())).toBe(true);
+    expect(itIsDefined(undefined)).toBe(false);
+    expect(itIsDefined(null)).toBe(false);
   });
 
   it('should execute test of "isUndefined" successful', () => {
-    expect(isUndefined('Daniel')).toBe(false);
-    expect(isUndefined(24)).toBe(false);
-    expect(isUndefined(new Date())).toBe(false);
-    expect(isUndefined(undefined)).toBe(true);
-    expect(isUndefined(null)).toBe(true);
+    expect(itIsUndefined('Daniel')).toBe(false);
+    expect(itIsUndefined(24)).toBe(false);
+    expect(itIsUndefined(new Date())).toBe(false);
+    expect(itIsUndefined(undefined)).toBe(true);
+    expect(itIsUndefined(null)).toBe(true);
   });
 
   it('should execute test of "parseBoolean" successful', () => {

@@ -74,17 +74,17 @@ function executePromises<T extends any>(props: PromisesProps<T>): void {
   });
 }
 
-export function isDefined(object: any): boolean {
+export function itIsDefined<T = any>(object: T): object is NonNullable<T> {
   return typeof object !== 'undefined' && object !== null;
 }
 
-export function isUndefined(object: any): boolean {
-  return !isDefined(object);
+export function itIsUndefined(object: any): object is undefined | null {
+  return !itIsDefined(object);
 }
 
 export function parseBoolean(value: any): boolean {
   return !(
-    isUndefined(value) ||
+    itIsUndefined(value) ||
     value === false ||
     FALSY_VALUE.includes(value)
   );
