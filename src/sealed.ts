@@ -2,8 +2,8 @@ export type StateSealed<R> = Record<string, (value?: any) => R>;
 
 export class Sealed<R, V, T extends StateSealed<R>> {
   protected constructor(
-    public readonly key: keyof T,
-    public readonly value?: V
+    private key: keyof T,
+    private value?: V
   ) {}
 
   public when(resolver: T, otherwise?: () => void): R {
@@ -20,12 +20,16 @@ export class Sealed<R, V, T extends StateSealed<R>> {
     /* istanbul ignore next */
     throw Error('Sealed class could not resolve call');
   }
+
+  public is(key: keyof T): boolean {
+    return this.key === key;
+  }
 }
 
 export class PartialSealed<R, V, T extends StateSealed<R>> {
   protected constructor(
-    public readonly key: keyof T,
-    public readonly value?: V
+    private key: keyof T,
+    private value?: V
   ) {}
 
   public when(resolver: Partial<T>, otherwise?: () => void): Undefined<R> {
@@ -36,5 +40,9 @@ export class PartialSealed<R, V, T extends StateSealed<R>> {
     }
 
     return handler ? handler(this.value) : undefined;
+  }
+
+  public is(key: keyof T): boolean {
+    return this.key === key;
   }
 }
