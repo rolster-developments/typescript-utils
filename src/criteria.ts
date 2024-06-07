@@ -1,13 +1,11 @@
-type CallbackCriteria<T = any, O extends LiteralObject = LiteralObject> = (
-  key: keyof O,
-  value: T
-) => void;
+type CriteriaKey = string | number | symbol;
+type CallbackCriteria = (key: CriteriaKey, value: any) => void;
 
 export interface AbstractCriteria<
   T = any,
   O extends LiteralObject = LiteralObject
 > {
-  assign(callback: CallbackCriteria<T>): void;
+  assign(callback: CallbackCriteria): void;
   equals(value: T): boolean;
   key: keyof O;
   value: T;
@@ -21,7 +19,7 @@ export class Criteria<T = any, O extends LiteralObject = LiteralObject>
     public readonly value: T
   ) {}
 
-  public assign(callback: CallbackCriteria<T>): void {
+  public assign(callback: CallbackCriteria): void {
     callback(this.key, this.value);
   }
 
@@ -90,8 +88,12 @@ export class Criterias<O extends LiteralObject = LiteralObject> {
   public toLiteralObject(): LiteralObject {
     const payload: LiteralObject = {};
 
-    this.collection.forEach(({ key, value }) => {
-      payload[key] = value;
+    function assign(key: keyof O, value: any) {
+      payload.set(key, value);
+    }
+
+    this.collection.forEach((criteria) => {
+      criteria.assign(assign);
     });
 
     return payload;
