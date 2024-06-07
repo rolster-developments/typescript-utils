@@ -1,15 +1,23 @@
-export type CallbackCriteria<T = any> = (key: string, value: T) => void;
+type CallbackCriteria<T = any, O extends LiteralObject = LiteralObject> = (
+  key: keyof O,
+  value: T
+) => void;
 
-export interface AbstractCriteria<T = any> {
+export interface AbstractCriteria<
+  T = any,
+  O extends LiteralObject = LiteralObject
+> {
   assign(callback: CallbackCriteria<T>): void;
   equals(value: T): boolean;
-  key: string;
+  key: keyof O;
   value: T;
 }
 
-export class Criteria<T> implements AbstractCriteria<T> {
+export class Criteria<T = any, O extends LiteralObject = LiteralObject>
+  implements AbstractCriteria<T, O>
+{
   constructor(
-    public readonly key: string,
+    public readonly key: keyof O,
     public readonly value: T
   ) {}
 
@@ -22,18 +30,25 @@ export class Criteria<T> implements AbstractCriteria<T> {
   }
 }
 
-export class Criterias {
-  private collection: Map<string, AbstractCriteria>;
+export class Criterias<O extends LiteralObject = LiteralObject> {
+  private collection: Map<string | number | symbol, AbstractCriteria<any, O>>;
 
   constructor() {
     this.collection = new Map();
   }
 
   public append<T = any>(criteria: AbstractCriteria<T>): this;
-  public append<T = any>(key: string, value: T): this;
-  public append<T = any>(data: string | AbstractCriteria<T>, value?: T): this {
-    if (typeof data === 'string') {
-      this.collection.set(data, new Criteria(data, value));
+  public append<T = any>(key: keyof O, value: T): this;
+  public append<T = any>(
+    data: keyof O | AbstractCriteria<T, O>,
+    value?: T
+  ): this {
+    if (
+      typeof data === 'string' ||
+      typeof data === 'number' ||
+      typeof data === 'symbol'
+    ) {
+      this.collection.set(data, new Criteria<any, O>(data, value));
     } else {
       this.collection.set(data.key, data);
     }
@@ -41,15 +56,15 @@ export class Criterias {
     return this;
   }
 
-  public fetch<T = any>(key: string): Undefined<AbstractCriteria<T>> {
+  public request<T = any>(key: keyof O): Undefined<AbstractCriteria<T>> {
     return this.collection.get(key);
   }
 
-  public value<T = any>(key: string): Undefined<T> {
-    return this.fetch(key)?.value;
+  public value<T = any>(key: keyof O): Undefined<T> {
+    return this.request(key)?.value;
   }
 
-  public equals({ collection }: Criterias): boolean {
+  public equals({ collection }: Criterias<O>): boolean {
     if (this.collection.size !== collection.size) {
       return false;
     }
@@ -62,7 +77,7 @@ export class Criterias {
     while (equals && index < criterias.length) {
       const { key, value } = criterias[index];
 
-      const criteria = this.fetch(key);
+      const criteria = this.request(key);
 
       equals = equals && !!criteria && criteria.equals(value);
 
@@ -82,8 +97,10 @@ export class Criterias {
     return payload;
   }
 
-  public static fromLiteralObject(object: LiteralObject): Criterias {
-    const criterias = new Criterias();
+  public static fromLiteralObject<O extends LiteralObject>(
+    object: O
+  ): Criterias<O> {
+    const criterias = new Criterias<O>();
 
     Object.entries(object).forEach(([key, value]) => {
       criterias.append(key, value);

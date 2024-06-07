@@ -1,3 +1,4 @@
+export * from './criteria';
 export * from './currency-format';
 export * from './double';
 export * from './either';
