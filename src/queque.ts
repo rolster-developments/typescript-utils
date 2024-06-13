@@ -50,4 +50,20 @@ export class Queque<T> {
 
     return value;
   }
+
+  public static fromArray<T>(collection: T[]): Queque<T> {
+    const queque = new Queque<T>();
+
+    collection.forEach((element) => queque.enqueue(element));
+
+    return queque;
+  }
+
+  public static map<T, V>(collection: T[], map: (element: T) => V): Queque<V> {
+    const queque = new Queque<V>();
+
+    collection.map((element) => queque.enqueue(map(element)));
+
+    return queque;
+  }
 }

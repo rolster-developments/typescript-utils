@@ -89,7 +89,7 @@ export class Criterias<O extends LiteralObject = LiteralObject> {
     const payload: LiteralObject = {};
 
     function assign(key: keyof O, value: any) {
-      payload.set(key, value);
+      payload[key] = value;
     }
 
     this.collection.forEach((criteria) => {
