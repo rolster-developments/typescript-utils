@@ -4,6 +4,8 @@ export * from './double';
 export * from './either';
 export * from './helpers';
 export * from './optional';
+export * from './promise-rx';
+export * from './promises';
 export * from './queque';
 export * from './sealed';
 export * from './scroller';

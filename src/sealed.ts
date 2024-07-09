@@ -41,8 +41,4 @@ export class PartialSealed<R, V, T extends StateSealed<R>> {
 
     return handler ? handler(this.value) : undefined;
   }
-
-  public is(key: keyof T): boolean {
-    return this.key === key;
-  }
 }

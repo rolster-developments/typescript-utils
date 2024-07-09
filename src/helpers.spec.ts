@@ -1,17 +1,12 @@
 import {
   callback,
-  catchPromise,
   deepClone,
   deepFreeze,
   evalValueOrFunction,
-  fromPromise,
   itIsDefined,
   itIsUndefined,
   parse,
-  parseBoolean,
-  successPromise,
-  voidPromise,
-  zipPromise
+  parseBoolean
 } from './helpers';
 
 class LastName {
@@ -168,59 +163,6 @@ describe('Helpers', () => {
     expect(person).toBeDefined();
     expect(Object.isFrozen(person)).toBe(true);
     expect(Object.isFrozen(person.lastName)).toBe(true);
-  });
-
-  it('should execute test of "fromPromise" successful', async () => {
-    expect(await fromPromise(Promise.resolve(20))).toBe(20);
-    expect(await fromPromise(20)).toBe(20);
-  });
-
-  it('should execute test of "zipPromise" successful', async () => {
-    const result = await zipPromise<any>([
-      () => Promise.resolve(20),
-      () => Promise.resolve('Daniel'),
-      () => Promise.resolve(true)
-    ]);
-
-    const [age, name, status] = result;
-
-    expect(result).toBeDefined();
-    expect(age).toBe(20);
-    expect(name).toBe('Daniel');
-    expect(status).toBe(true);
-
-    const resultEmpty = await zipPromise([]);
-
-    const [empty] = resultEmpty;
-
-    expect(result).toBeDefined();
-    expect(empty).toBeUndefined();
-
-    await zipPromise<any>([
-      () => Promise.resolve(20),
-      () => Promise.resolve('Daniel'),
-      () => Promise.reject('Error')
-    ]).catch((err) => {
-      expect(err).toBe('Error');
-    });
-  });
-
-  it('should execute test of "successPromise" successful', async () => {
-    expect(await successPromise(Promise.resolve(20))).toBe(undefined);
-
-    expect(
-      await successPromise(Promise.reject('Error')).catch((err) => err)
-    ).toBe('Error');
-  });
-
-  it('should execute test of "voidPromise" successful', async () => {
-    expect(await voidPromise(Promise.resolve(20))).toBe(undefined);
-    expect(await voidPromise(Promise.reject('Error'))).toBe(undefined);
-  });
-
-  it('should execute test of "catchPromise" successful', async () => {
-    expect(await catchPromise(Promise.resolve(20))).toBe(20);
-    expect(await catchPromise(Promise.reject('Error'))).toBe(undefined);
   });
 
   it('should execute test of "callback" successful', () => {
