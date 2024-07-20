@@ -1,6 +1,6 @@
-export type StateSealed<R> = Record<string, (value?: any) => R>;
+export type SealedState<R> = Record<string, (value?: any) => R>;
 
-export class Sealed<R, V, T extends StateSealed<R>> {
+export class Sealed<R, V, T extends SealedState<R>> {
   private sealedOtherwise?: () => void;
 
   protected constructor(
@@ -36,7 +36,7 @@ export class Sealed<R, V, T extends StateSealed<R>> {
   }
 }
 
-export class PartialSealed<R, V, T extends StateSealed<R>> {
+export class PartialSealed<R, V, T extends SealedState<R>> {
   private sealedOtherwise?: () => void;
 
   protected constructor(
