@@ -49,5 +49,8 @@
     "typescript",
     "utilities",
     "advanced"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
