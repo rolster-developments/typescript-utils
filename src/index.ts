@@ -3,6 +3,7 @@ export * from './currency-format';
 export * from './double';
 export * from './either';
 export * from './helpers';
+export * from './observable';
 export * from './optional';
 export * from './promise-observable';
 export * from './promises';
