@@ -1,6 +1,6 @@
 export type Observer<T> = (value: T) => void;
 
-class Observable<T = any> {
+class RolsterObservable<T = any> {
   private observers: Observer<T>[] = [];
 
   private currentState: T;
@@ -26,8 +26,10 @@ class Observable<T = any> {
   }
 }
 
-export function observable<T>(state: T): Observable<T>;
-export function observable<T>(): Observable<T | undefined>;
-export function observable<T>(state?: T): Observable<T | undefined> {
-  return new Observable(state);
+export type Observable<T> = RolsterObservable<T>;
+
+export function observable<T>(state: T): RolsterObservable<T>;
+export function observable<T>(): RolsterObservable<T | undefined>;
+export function observable<T>(state?: T): RolsterObservable<T | undefined> {
+  return new RolsterObservable(state);
 }
