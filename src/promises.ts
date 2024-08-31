@@ -8,6 +8,13 @@ type PromisesProps<T extends any> = {
   success: (results: T[]) => void;
 };
 
+type SecurePromiseCallback<T = any> = () => Promise<T>;
+
+export interface SecurePromise<T = any> {
+  reset(): void;
+  resolve(): Promise<T>;
+}
+
 function resolvePromises<T extends any>(props: PromisesProps<T>): void {
   const { error, index, promises, result, success } = props;
 
@@ -96,4 +103,27 @@ export function catchPromise<T>(
 
     return undefined;
   });
+}
+
+export function securePromise<T = any>(
+  callback: SecurePromiseCallback<T>
+): SecurePromise<T> {
+  let promise$: Undefined<Promise<T>> = undefined;
+
+  function resolve(): Promise<T> {
+    if (!promise$) {
+      promise$ = callback().catch((err) => {
+        reset();
+        throw err;
+      });
+    }
+
+    return promise$;
+  }
+
+  function reset(): void {
+    promise$ = undefined;
+  }
+
+  return { reset, resolve };
 }

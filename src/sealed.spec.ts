@@ -27,7 +27,7 @@ const emailSpy = jest.spyOn(resolver, 'email');
 
 const otherwise = jest.fn();
 
-fdescribe('Sealed', () => {
+describe('Sealed', () => {
   afterEach(() => jest.clearAllMocks());
 
   it('should execute method "daniel" in Sealed, not otherwise', () => {

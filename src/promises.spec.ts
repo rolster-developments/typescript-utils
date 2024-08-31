@@ -1,12 +1,13 @@
 import {
   catchPromise,
   fromPromise,
+  securePromise,
   thenPromise,
   voidPromise,
   zipPromise
 } from './promises';
 
-describe('Helpers', () => {
+describe('Promises', () => {
   it('should execute test of "fromPromise" successful', async () => {
     expect(await fromPromise(Promise.resolve(20))).toBe(20);
     expect(await fromPromise(20)).toBe(20);
@@ -58,5 +59,42 @@ describe('Helpers', () => {
   it('should execute test of "catchPromise" successful', async () => {
     expect(await catchPromise(Promise.resolve(20))).toBe(20);
     expect(await catchPromise(Promise.reject('Error'))).toBe(undefined);
+  });
+
+  it('should execute test of "securePromise" successful', async () => {
+    let value: number = 20;
+    let counter = 1;
+
+    const callback = jest.fn();
+
+    callback.mockImplementation(() => {
+      if (counter < 3) {
+        counter++;
+        return Promise.resolve(value);
+      } else {
+        counter = 1;
+        return Promise.reject(new Error('Error in callback'));
+      }
+    });
+
+    const number$ = securePromise(callback);
+
+    expect(await number$.resolve()).toBe(20);
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    value = 40;
+
+    expect(await number$.resolve()).toBe(20);
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    number$.reset();
+
+    expect(await number$.resolve()).toBe(40);
+    expect(callback).toHaveBeenCalledTimes(2);
+
+    number$.reset();
+
+    expect(await number$.resolve().catch(() => undefined)).toBeUndefined();
+    expect(callback).toHaveBeenCalledTimes(3);
   });
 });
