@@ -15,11 +15,15 @@ class RolsterObservable<T = any> {
     observer(this.currentState);
 
     return () => {
-      this.observers.filter((currentObserver) => currentObserver !== observer);
+      this.observers = this.observers.filter(
+        (currentObserver) => currentObserver !== observer
+      );
     };
   }
 
   public next(state: T): void {
+    this.currentState = state;
+
     this.observers.forEach((observer) => {
       observer(state);
     });
