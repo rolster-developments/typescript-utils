@@ -29,10 +29,8 @@ describe('Promises', () => {
 
     const resultEmpty = await zipPromise([]);
 
-    const [empty] = resultEmpty;
-
-    expect(result).toBeDefined();
-    expect(empty).toBeUndefined();
+    expect(resultEmpty).toBeDefined();
+    expect(resultEmpty.length).toBe(0);
 
     await zipPromise<any>([
       () => Promise.resolve(20),

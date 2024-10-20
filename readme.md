@@ -1,11 +1,11 @@
-# Rolster Helpers Advanced
+# Rolster Commons
 
 Advanced utilities package compatible with Typescript projects.
 
 ## Installation
 
 ```
-npm i @rolster/helpers-advanced
+npm i @rolster/commons
 ```
 
 ## Configuration

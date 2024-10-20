@@ -1,62 +1,7 @@
-type PromisesFn<T extends any> = () => Promise<T>;
+import { itIsDefined } from './helpers';
 
-type PromisesProps<T extends any> = {
-  error: (error: any) => void;
-  index: number;
-  promises: PromisesFn<T>[];
-  result: T[];
-  success: (results: T[]) => void;
-};
-
-type SecurePromiseCallback<T = any> = () => Promise<T>;
-
-export interface SecurePromise<T = any> {
-  reset(): void;
-  resolve(): Promise<T>;
-}
-
-function resolvePromises<T extends any>(props: PromisesProps<T>): void {
-  const { error, index, promises, result, success } = props;
-
-  if (index === promises.length) {
-    return success(result);
-  }
-
-  const callback = promises[index];
-
-  new Promise(() => {
-    callback()
-      .then((value) =>
-        resolvePromises({
-          ...props,
-          index: index + 1,
-          result: [...result, value]
-        })
-      )
-      .catch((err) => error(err));
-  });
-}
-
-export function fromPromise<M>(value: M | Promise<M>): Promise<M> {
+export function fromPromise<T>(value: T | Promise<T>): Promise<T> {
   return value instanceof Promise ? value : Promise.resolve(value);
-}
-
-export function zipPromise<T = any>(promises: PromisesFn<T>[]): Promise<T[]> {
-  return promises.length
-    ? new Promise((resolve, reject) => {
-        resolvePromises({
-          error: (err) => {
-            reject(err);
-          },
-          index: 0,
-          result: [],
-          promises,
-          success: (result) => {
-            resolve(result);
-          }
-        });
-      })
-    : Promise.resolve([]);
 }
 
 export function thenPromise<T>(
@@ -105,15 +50,95 @@ export function catchPromise<T>(
   });
 }
 
+type ZipPromiseCallback<T extends any> = () => Promise<T>;
+
+type ZipPromiseTuple<T> = {
+  [K in keyof T]: ZipPromiseCallback<T[K]>;
+};
+
+interface ZipPromisesOptions<T extends any[]> {
+  callbacks: [...ZipPromiseTuple<T>];
+  catchError: (error: any) => void;
+  index: number;
+  result: T;
+  resolve: (result: T) => void;
+}
+
+function zipResolveCallbacks<T extends any[]>(
+  options: ZipPromisesOptions<T>
+): void {
+  const { callbacks, catchError, index, resolve, result } = options;
+
+  if (index === callbacks.length) {
+    return resolve(result);
+  }
+
+  new Promise(() => {
+    callbacks[index]()
+      .then((value) => {
+        result.push(value);
+
+        return zipResolveCallbacks({
+          ...options,
+          index: index + 1,
+          result
+        });
+      })
+      .catch((err) => {
+        return catchError(err);
+      });
+  });
+}
+
+export function zipPromise<T extends any[]>(
+  callbacks: [...ZipPromiseTuple<T>]
+): Promise<T> {
+  const result: any = [];
+
+  return new Promise<T>((resolve, reject) => {
+    zipResolveCallbacks<T>({
+      callbacks,
+      catchError: (err) => {
+        reject(err);
+      },
+      index: 0,
+      resolve: (result) => {
+        resolve(result);
+      },
+      result
+    });
+  });
+}
+
+type SecurePromiseCallback<T = any> = () => Promise<T>;
+
+export interface SecurePromise<T = any> {
+  itIsInstanced(): boolean;
+  reset(): void;
+  resolve(): Promise<T>;
+}
+
 export function securePromise<T = any>(
-  callback: SecurePromiseCallback<T>
+  callback: SecurePromiseCallback<T>,
+  catchError?: (err: any) => Undefined<T>
 ): SecurePromise<T> {
   let promise$: Undefined<Promise<T>> = undefined;
+
+  function itIsInstanced(): boolean {
+    return itIsDefined(promise$);
+  }
 
   function resolve(): Promise<T> {
     if (!promise$) {
       promise$ = callback().catch((err) => {
+        const errorValue = catchError && catchError(err);
+
         reset();
+
+        if (errorValue) {
+          return errorValue;
+        }
+
         throw err;
       });
     }
@@ -125,5 +150,5 @@ export function securePromise<T = any>(
     promise$ = undefined;
   }
 
-  return { reset, resolve };
+  return { itIsInstanced, reset, resolve };
 }
