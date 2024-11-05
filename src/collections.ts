@@ -1,9 +1,13 @@
-export class SecureMap<V = any, K = string> extends Map<K, V> {
-  public request(key: K, initialValue: V): V {
+export class SecureMap<V = unknown, K = string> extends Map<K, V> {
+  public request(key: K, initialValue: V | (() => V)): V {
     let value = this.get(key);
 
     if (!value) {
-      value = initialValue;
+      value =
+        typeof initialValue === 'function'
+          ? ((initialValue as Function)() as V)
+          : initialValue;
+
       this.set(key, value);
     }
 
