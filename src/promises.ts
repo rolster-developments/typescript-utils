@@ -114,6 +114,7 @@ type SecurePromiseCallback<T = any> = () => Promise<T>;
 
 export interface SecurePromise<T = any> {
   itIsInstanced(): boolean;
+  refresh(): Promise<T>;
   reset(): void;
   resolve(): Promise<T>;
 }
@@ -150,5 +151,11 @@ export function securePromise<T = any>(
     promise$ = undefined;
   }
 
-  return { itIsInstanced, reset, resolve };
+  function refresh(): Promise<T> {
+    promise$ = undefined;
+
+    return resolve();
+  }
+
+  return { itIsInstanced, refresh, reset, resolve };
 }
