@@ -1,12 +1,13 @@
 export class SecureMap<V = unknown, K = string> extends Map<K, V> {
-  public request(key: K, initialValue: V | (() => V)): V {
+  constructor(private initialValue: () => V) {
+    super();
+  }
+
+  public request(key: K, initialValue?: V): V {
     let value = this.get(key);
 
     if (!value) {
-      value =
-        typeof initialValue === 'function'
-          ? ((initialValue as Function)() as V)
-          : initialValue;
+      value = initialValue ?? this.initialValue();
 
       this.set(key, value);
     }
