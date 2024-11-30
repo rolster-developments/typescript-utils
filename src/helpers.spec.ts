@@ -5,6 +5,7 @@ import {
   evalValueOrFunction,
   itIsDefined,
   itIsUndefined,
+  normalizeJson,
   parse,
   parseBoolean
 } from './helpers';
@@ -172,5 +173,33 @@ describe('Helpers', () => {
 
     expect(callback<number>(multiply, 5, 7)).toBe(35);
     expect(callback(undefined, 5, 7)).toBeUndefined();
+  });
+
+  it('should execute test of "normalizeJson" successful', () => {
+    expect(normalizeJson({ nickname: 'Daniel' })).toEqual({
+      nickname: 'Daniel'
+    });
+
+    expect(
+      normalizeJson({
+        nickname: 'Daniel',
+        address: { city: 'Valledupar', country: undefined }
+      })
+    ).toEqual({
+      nickname: 'Daniel',
+      address: { city: 'Valledupar' }
+    });
+
+    expect(
+      normalizeJson({
+        nickname: 'Daniel',
+        address: { city: 'Valledupar' },
+        points: ['10', '20', '40']
+      })
+    ).toEqual({
+      nickname: 'Daniel',
+      address: { city: 'Valledupar' },
+      points: ['10', '20', '40']
+    });
   });
 });

@@ -93,6 +93,27 @@ export function callback<T = any>(
   return typeof call !== 'function' ? undefined : call.apply(call, args);
 }
 
+function normalizeValue(value: any): void {
+  return typeof value === 'object'
+    ? Array.isArray(value)
+      ? value.map((value) => normalizeValue(value))
+      : normalizeJson(value)
+    : value;
+}
+
+export function normalizeJson(payload: LiteralObject): LiteralObject {
+  return Object.entries(payload).reduce(
+    (result: LiteralObject, [key, value]) => {
+      if (itIsDefined(value)) {
+        result[key] = normalizeValue(value);
+      }
+
+      return result;
+    },
+    {}
+  );
+}
+
 /* istanbul ignore next */
 export function base64ToBlob(data64: string, mimeType: string): Blob {
   const result64 = data64.replace(/^[^,]+,/, '').replace(/\s/g, '');
