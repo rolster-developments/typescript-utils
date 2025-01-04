@@ -6,15 +6,13 @@ export function fromPromise<T>(value: T | Promise<T>): Promise<T> {
 
 export function thenPromise<T>(
   promise: Promise<T>,
-  printError = false
+  canLogError = false
 ): Promise<void> {
   return promise
     .then(() => undefined)
     .catch((err) => {
-      /* istanbul ignore if */
-      if (printError) {
-        console.log(err);
-      }
+      /* istanbul ignore next */
+      canLogError && console.log(err);
 
       throw err;
     });
@@ -22,15 +20,13 @@ export function thenPromise<T>(
 
 export function voidPromise<T>(
   promise: Promise<T>,
-  printError = false
+  canLogError = false
 ): Promise<void> {
   return promise
     .then(() => undefined)
     .catch((err) => {
-      /* istanbul ignore if */
-      if (printError) {
-        console.log(err);
-      }
+      /* istanbul ignore next */
+      canLogError && console.log(err);
 
       return undefined;
     });
@@ -38,13 +34,11 @@ export function voidPromise<T>(
 
 export function catchPromise<T>(
   promise: Promise<T>,
-  printError = false
+  canLogError = false
 ): Promise<Undefined<T>> {
   return promise.catch((err) => {
-    /* istanbul ignore if */
-    if (printError) {
-      console.log(err);
-    }
+    /* istanbul ignore next */
+    canLogError && console.log(err);
 
     return undefined;
   });
@@ -73,8 +67,10 @@ function zipResolveCallbacks<T extends any[]>(
     return resolve(result);
   }
 
+  const promise = callbacks[index];
+
   new Promise(() => {
-    callbacks[index]()
+    promise()
       .then((value) => {
         result.push(value);
 
