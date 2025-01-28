@@ -188,7 +188,7 @@ export class Double {
 
   public roundCeil(): Double {
     const decimals = this.decimals
-      .slice(0, this.exp)
+      .slice(0, this.exp + 1)
       .map((value, index) => (index === this.exp ? value + 1 : value));
 
     return new Double({
@@ -200,7 +200,7 @@ export class Double {
 
   public roundFloor(): Double {
     return new Double({
-      decimals: this.decimals.slice(0, this.exp),
+      decimals: this.decimals.slice(0, this.exp + 1),
       exp: this.exp,
       signed: this.signed
     });
