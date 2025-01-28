@@ -187,26 +187,22 @@ export class Double {
   }
 
   public roundCeil(): Double {
-    const { decimals, exp, signed } = this;
-
-    const [integer, decimal] = decimals;
+    const decimals = this.decimals
+      .slice(0, this.exp)
+      .map((value, index) => (index === this.exp ? value + 1 : value));
 
     return new Double({
-      decimals: [decimal && decimal > 0 ? integer + 1 : integer],
-      exp,
-      signed
+      decimals,
+      exp: this.exp,
+      signed: this.signed
     });
   }
 
   public roundFloor(): Double {
-    const { decimals, exp, signed } = this;
-
-    const [integer] = decimals;
-
     return new Double({
-      decimals: [integer],
-      exp,
-      signed
+      decimals: this.decimals.slice(0, this.exp),
+      exp: this.exp,
+      signed: this.signed
     });
   }
 
@@ -215,12 +211,10 @@ export class Double {
   }
 
   public props(): DoubleProps {
-    const { decimals, exp, signed } = this;
-
     return {
-      decimals: [...decimals],
-      exp,
-      signed
+      decimals: [...this.decimals],
+      exp: this.exp,
+      signed: this.signed
     };
   }
 
