@@ -8,19 +8,23 @@ const prototypeToString = Object.prototype.toString;
 
 type Calleable<T> = Undefined<(...args: any) => T>;
 
-function clone<A>(object: A, caches: unknown[]): A {
+type ReplaceClone<C> = Partial<{ [K in keyof C]: C[K] }>;
+
+function _clone<O>(
+  object: O,
+  caches: unknown[],
+  replaces?: ReplaceClone<O>
+): O {
   if (typeof object !== 'object') {
     return object;
   }
 
   if (prototypeToString.call(object) === '[object Object]') {
-    const [cacheObject] = caches.filter(
-      (cacheObject) => cacheObject === object
-    );
+    const [_object] = caches.filter((_object) => _object === object);
 
     /* istanbul ignore if */
-    if (cacheObject) {
-      return cacheObject as A;
+    if (_object) {
+      return _object as O;
     }
 
     caches.push(object);
@@ -33,13 +37,15 @@ function clone<A>(object: A, caches: unknown[]): A {
     return new ConstructorObject(object);
   }
 
-  const cloneObject: A = new ConstructorObject();
+  const _object: O = new ConstructorObject();
 
-  for (const prop in object) {
-    cloneObject[prop] = clone<any>(object[prop], caches);
+  for (const key in object) {
+    _object[key] = replaces
+      ? replaces[key] ?? _clone<any>(object[key], caches)
+      : _clone<any>(object[key], caches);
   }
 
-  return cloneObject;
+  return _object;
 }
 
 export function itIsDefined<T = any>(object: T): object is NonNullable<T> {
@@ -70,16 +76,16 @@ export function evalValueOrFunction<T>(value: ValueOrFunction<T>): T {
   return typeof value === 'function' ? (value as Function)() : value;
 }
 
-export function deepClone<A>(object: A): A {
-  return clone(object, []);
+export function clone<O>(object: O, replaces?: ReplaceClone<O>): O {
+  return _clone(object, [], replaces);
 }
 
-export function deepFreeze<A>(object: A): Readonly<A> {
+export function freeze<A>(object: A): Readonly<A> {
   for (const prop in object) {
     const value = object[prop];
 
     if (typeof value === 'object' && !Object.isFrozen(value)) {
-      deepFreeze(value);
+      freeze(value);
     }
   }
 

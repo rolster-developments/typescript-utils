@@ -1,8 +1,8 @@
 import {
   callback,
-  deepClone,
-  deepFreeze,
+  clone,
   evalValueOrFunction,
+  freeze,
   itIsDefined,
   itIsUndefined,
   normalizeJson,
@@ -15,6 +15,8 @@ class LastName {
 }
 
 class Person {
+  public readonly occupation: string = 'None';
+
   private ageState = 20;
 
   public readonly lastName: LastName;
@@ -97,19 +99,19 @@ describe('Helpers', () => {
     expect(evalValueOrFunction(() => 30)).toBe(30);
   });
 
-  it('should execute test of "deepClone" with primitive successful', () => {
+  it('should execute test of "clone" with primitive successful', () => {
     let fullName = 'Daniel'; // Initial state
 
     expect(fullName).toBe('Daniel');
 
-    const fullNameClone = deepClone(fullName);
+    const fullNameClone = clone(fullName);
     fullName = 'Daniel Castillo';
 
     expect(fullName).toBe('Daniel Castillo');
     expect(fullNameClone).toBe('Daniel');
   });
 
-  it('should execute test of "deepClone" with Date successful', () => {
+  it('should execute test of "clone" with Date successful', () => {
     const dateInitial = new Date(1991, 4, 3, 0, 0, 0);
 
     expect(dateInitial).toBeDefined();
@@ -124,7 +126,7 @@ describe('Helpers', () => {
     expect(dateInitial.getFullYear()).toBe(1993);
     expect(dateReference.getFullYear()).toBe(1993);
 
-    const dateClone = deepClone(dateInitial);
+    const dateClone = clone(dateInitial);
 
     dateClone.setFullYear(1991);
 
@@ -133,33 +135,42 @@ describe('Helpers', () => {
     expect(dateClone.getFullYear()).toBe(1991);
   });
 
-  it('should execute test of "deepClone" with CustomClass successful', () => {
+  it('should execute test of "clone" with CustomClass successful', () => {
     const person = new Person('Katherin', 'Bolaño');
 
     expect(person).toBeDefined();
     expect(person.fullName).toBe('Katherin Bolaño');
     expect(person.age).toBe(20);
 
-    const personClone = deepClone(person);
+    const _person1 = clone(person);
 
-    expect(personClone).toBeDefined();
+    expect(_person1).toBeDefined();
 
-    personClone.setAge(30);
+    _person1.setAge(30);
 
     expect(person.age).toBe(20);
     expect(person.fullName).toBe('Katherin Bolaño');
-    expect(personClone.age).toBe(30);
-    expect(personClone.fullName).toBe('Katherin Bolaño');
+    expect(_person1.age).toBe(30);
+    expect(_person1.fullName).toBe('Katherin Bolaño');
+
+    const _person2 = clone(person, { occupation: 'Instrumentadora' });
+
+    expect(_person2).toBeDefined();
+
+    expect(person.occupation).toBe('None');
+    expect(_person2.age).toBe(20);
+    expect(_person2.fullName).toBe('Katherin Bolaño');
+    expect(_person2.occupation).toBe('Instrumentadora');
   });
 
-  it('should execute test of "deepFreeze" successful', () => {
+  it('should execute test of "freeze" successful', () => {
     const person = new Person('Daniel', 'Castillo');
 
     expect(person).toBeDefined();
     expect(Object.isFrozen(person)).toBe(false);
     expect(Object.isFrozen(person.lastName)).toBe(false);
 
-    deepFreeze(person);
+    freeze(person);
 
     expect(person).toBeDefined();
     expect(Object.isFrozen(person)).toBe(true);
